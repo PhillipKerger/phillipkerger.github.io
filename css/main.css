@@ -3,9 +3,6 @@ body {
     width: 70%;
 }
 
-a {
-  margin-right: 500px;
-}
 
 nav ul, footer ul {
     font-family:'Helvetica', 'Arial', 'Sans-Serif';
@@ -20,6 +17,7 @@ nav ul li, footer ul li {
 a {
     text-decoration: none;
     color: #999;
+    margin-right: 500px;
 }
 a:hover {
     text-decoration: underline;
