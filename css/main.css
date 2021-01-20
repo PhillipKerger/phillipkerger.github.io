@@ -1,6 +1,6 @@
 body {
     margin: 80px auto;
-    width: 70%;
+    width: 50%;
 }
 
 
@@ -17,8 +17,8 @@ nav ul li, footer ul li {
 a {
     text-decoration: none;
     color: #999;
-    margin-right: 500px;
 }
+
 a:hover {
     text-decoration: underline;
 }
