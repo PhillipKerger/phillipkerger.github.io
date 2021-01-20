@@ -41,3 +41,14 @@ ul.posts {
 ul.posts li {
     list-style: none;
 }
+
+right {
+    float: right;
+}
+
+wrapper {
+    width: 500px;
+    margin: auto;
+    padding: auto;
+    overflow: auto;
+}
