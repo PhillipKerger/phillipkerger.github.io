@@ -1,6 +1,8 @@
-body {
-    margin: 80px auto;
-    width: 70%;
+body, html {
+    margin-left:1%;
+    margin-right:1%;
+    margin-bottom:1%;
+    margin-top:1%;
 }
 
 
