@@ -22,7 +22,7 @@ nav ul li, footer ul li {
 a {
     text-decoration: none;
     background-color: black;
-    color: #333;
+    color: blue;
 }
 
 a:hover {
