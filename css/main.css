@@ -3,8 +3,10 @@ body, html {
     margin-right:14%;
     margin-bottom:2%;
     margin-top:2%;
+    color: #ffffff;
 }
 
+*{background-color: black}
 
 nav ul, footer ul {
     font-family:'Helvetica', 'Arial', 'Sans-Serif';
