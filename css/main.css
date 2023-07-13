@@ -3,6 +3,7 @@ body, html {
     margin-right:14%;
     margin-bottom:2%;
     margin-top:2%;
+    background-color: black;
     color: #ffffff;
 }
 
@@ -20,7 +21,8 @@ nav ul li, footer ul li {
 }
 a {
     text-decoration: none;
-    color: #999;
+    background-color: black;
+    color: #333;
 }
 
 a:hover {
@@ -33,7 +35,8 @@ h1 {
 p {
     font-size: 1.5em;
     line-height: 1.4em;
-    color: #333;
+    background-color: black;
+    color: #ffffff;
 }
 footer {
     border-top: 1px solid #d5d5d5;
