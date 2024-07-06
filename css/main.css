@@ -3,11 +3,11 @@ body, html {
     margin-right:14%;
     margin-bottom:2%;
     margin-top:2%;
-    background-color: black;
-    color: white;
+    background-color: white;
+    color: black;
 }
 
-*{background-color: black}
+*{background-color: white}
 
 nav ul, footer ul {
     font-family:'Helvetica', 'Arial', 'Sans-Serif';
@@ -21,7 +21,7 @@ nav ul li, footer ul li {
 }
 a {
     text-decoration: none;
-    background-color: black;
+    background-color: white;
     color: blue;
 }
 
@@ -35,8 +35,8 @@ h1 {
 p {
     font-size: 1.5em;
     line-height: 1.4em;
-    background-color: black;
-    color: white;
+    background-color: white;
+    color: black;
 }
 footer {
     border-top: 1px solid #d5d5d5;
