@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive two-dimensional linear programming discovery lab.">
+  <title>LP Discovery Lab</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Interactive optimization</p>
+      <h1>LP Discovery Lab</h1>
+      <p class="lede">Move an objective level set through a feasible region and discover where a linear program reaches its maximum.</p>
+    </div>
+    <button id="reset-button" class="secondary-button" type="button">Reset example</button>
+  </header>
+
+  <main>
+    <section class="workspace" aria-label="Linear programming explorer">
+      <div class="control-column">
+        <article class="card formulation-card">
+          <div class="card-heading">
+            <div>
+              <p class="step-label">The linear program</p>
+              <h2>Standard formulation</h2>
+            </div>
+            <span class="live-badge">editable</span>
+          </div>
+
+          <div class="lp-form" id="lp-form">
+            <div class="lp-row objective-row">
+              <span class="row-label">maximize</span>
+              <span class="expression">
+                <label><span class="sr-only">Objective coefficient of x 1</span><input id="c1" type="number" step="0.25"></label>
+                <i>x</i><sub>1</sub>
+                <span class="operator">+</span>
+                <label><span class="sr-only">Objective coefficient of x 2</span><input id="c2" type="number" step="0.25"></label>
+                <i>x</i><sub>2</sub>
+              </span>
+            </div>
+            <div class="subject-to">subject to</div>
+            <div id="constraint-inputs"></div>
+            <div class="lp-row nonnegative-row">
+              <span class="row-label"></span>
+              <span class="expression"><i>x</i><sub>1</sub>, <i>x</i><sub>2</sub> <span class="relation">≥</span> 0</span>
+            </div>
+          </div>
+          <p class="microcopy">Edit any coefficient. The graph and matrix formulation update immediately.</p>
+        </article>
+
+        <article class="card matrix-card">
+          <p class="step-label">The same problem</p>
+          <h2>Matrix–vector formulation</h2>
+          <div class="compact-model">
+            <div><span class="model-label">maximize</span> <i>c</i><sup>T</sup><i>x</i></div>
+            <div><span class="model-label">subject to</span> <i>Ax</i> ≤ <i>b</i>, &nbsp;<i>x</i> ≥ 0</div>
+          </div>
+          <div class="matrix-values" id="matrix-values" aria-live="polite"></div>
+        </article>
+      </div>
+
+      <article class="card graph-card">
+        <div class="graph-heading">
+          <div>
+            <p class="step-label">Geometric view</p>
+            <h2>Feasible region and objective</h2>
+          </div>
+          <div id="problem-status" class="status-pill" aria-live="polite"></div>
+        </div>
+
+        <div class="plot-wrap">
+          <svg id="plot" viewBox="0 0 720 590" role="img" aria-labelledby="plot-title plot-description">
+            <title id="plot-title">Two-dimensional linear program</title>
+            <desc id="plot-description">The graph shows the constraints, feasible region, objective level line, objective halfspace, and objective direction.</desc>
+            <defs>
+              <pattern id="objective-hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+                <rect width="10" height="10" fill="#f4b942" fill-opacity="0.09"></rect>
+                <line x1="0" y1="0" x2="0" y2="10" stroke="#d38b00" stroke-opacity="0.24" stroke-width="4"></line>
+              </pattern>
+              <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L9,3 z" fill="#a95f00"></path>
+              </marker>
+              <clipPath id="plot-clip"><rect x="64" y="24" width="624" height="510"></rect></clipPath>
+            </defs>
+            <g id="grid-layer"></g>
+            <g id="data-layers" clip-path="url(#plot-clip)">
+              <g id="objective-halfspace-layer"></g>
+              <g id="constraint-shading-layer"></g>
+              <g id="feasible-layer"></g>
+              <g id="constraint-lines-layer"></g>
+              <g id="objective-layer"></g>
+              <g id="vertex-layer"></g>
+            </g>
+            <g id="axis-layer"></g>
+          </svg>
+          <div class="legend" aria-label="Plot legend">
+            <span><i class="legend-swatch feasible"></i> feasible region</span>
+            <span><i class="legend-swatch objective"></i> objective ≥ <i>k</i></span>
+            <span><i class="legend-line"></i> objective = <i>k</i></span>
+          </div>
+        </div>
+
+        <div class="objective-controls">
+          <div class="k-readout">
+            <span>Objective threshold</span>
+            <strong><i>k</i> = <output id="k-output" for="k-slider">13.60</output></strong>
+          </div>
+          <label class="slider-label" for="k-slider">Slide the level line</label>
+          <input id="k-slider" class="k-slider" type="range" min="0" max="27.2" value="13.6" step="0.1">
+          <div class="slider-scale"><span>0</span><span id="slider-max-label">27.2</span></div>
+          <div class="max-control">
+            <label for="k-max">Slider maximum</label>
+            <input id="k-max" type="number" min="0.1" step="0.5" value="27.2">
+            <button id="set-optimum" class="text-button" type="button">Set <i>k</i> to optimum</button>
+          </div>
+        </div>
+
+        <div class="reading" id="geometric-reading" aria-live="polite"></div>
+      </article>
+    </section>
+
+    <section class="discovery-grid" aria-label="Discovery prompts">
+      <article class="discovery-card">
+        <span class="number">1</span>
+        <div>
+          <h2>Follow the arrow</h2>
+          <p>The arrow is the objective vector <i>c</i>. It points in the direction of steepest objective increase and is perpendicular to every objective level line.</p>
+        </div>
+      </article>
+      <article class="discovery-card">
+        <span class="number">2</span>
+        <div>
+          <h2>Move the threshold</h2>
+          <p>The striped set is the halfspace <i>c</i><sup>T</sup><i>x</i> ≥ <i>k</i>. Move <i>k</i> and notice that its boundary translates without rotating.</p>
+        </div>
+      </article>
+      <article class="discovery-card">
+        <span class="number">3</span>
+        <div>
+          <h2>Find the last contact</h2>
+          <p>Increase <i>k</i> until the striped halfspace barely intersects the feasible region. Where does that last contact occur?</p>
+          <button id="reveal-button" class="primary-button" type="button">Reveal vertices and optimum</button>
+          <p id="reveal-text" class="reveal-text" hidden></p>
+        </div>
+      </article>
+    </section>
+
+    <aside class="theorem-note">
+      <strong>A careful conclusion.</strong> When a linear program has a finite optimum over a feasible polyhedron with vertices, at least one optimal solution occurs at a vertex. Sometimes an entire edge is optimal; some LPs are infeasible or unbounded.
+    </aside>
+  </main>
+
+  <footer>Built for exploring linear programming in two dimensions.</footer>
+  <script src="app.js"></script>
+</body>
+</html>
