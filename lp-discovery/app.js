@@ -5,11 +5,11 @@
     c: [3, 2],
     constraints: [
       { a: 1, b: 1, rhs: 6 },
-      { a: 2, b: 1, rhs: 8 },
-      { a: 1, b: 3, rhs: 12 }
+      { a: 2.75, b: 1, rhs: 11 },
+      { a: 1.25, b: 3, rhs: 16 }
     ],
-    k: 13.6,
-    kMax: 27.2
+    k: 104 / 7,
+    kMax: 208 / 7
   };
 
   const colors = ["#4a67b2", "#b04b55", "#7c5aa6"];
