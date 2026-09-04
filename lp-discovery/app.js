@@ -12,7 +12,7 @@
     kMax: 208 / 7
   };
 
-  const colors = ["#4a67b2", "#b04b55", "#7c5aa6"];
+  const colors = ["#0066cc", "#d7191c", "#6a1b9a"];
   const margin = { left: 64, right: 32, top: 24, bottom: 72 };
   const width = 650;
   const height = 650;
