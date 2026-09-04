@@ -13,9 +13,9 @@
   };
 
   const colors = ["#4a67b2", "#b04b55", "#7c5aa6"];
-  const margin = { left: 64, right: 32, top: 24, bottom: 56 };
-  const width = 720;
-  const height = 590;
+  const margin = { left: 64, right: 32, top: 24, bottom: 72 };
+  const width = 650;
+  const height = 650;
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
   const EPS = 1e-7;
@@ -171,26 +171,17 @@
   }
 
   function graphBounds(solution) {
-    const xCandidates = [5];
-    const yCandidates = [5];
+    const candidates = [13];
     state.constraints.forEach((line) => {
-      if (line.a > EPS && line.rhs / line.a > 0) xCandidates.push(line.rhs / line.a);
-      if (line.b > EPS && line.rhs / line.b > 0) yCandidates.push(line.rhs / line.b);
+      if (line.a > EPS && line.rhs / line.a > 0) candidates.push(line.rhs / line.a);
+      if (line.b > EPS && line.rhs / line.b > 0) candidates.push(line.rhs / line.b);
     });
     solution.vertices.forEach((point) => {
-      xCandidates.push(point.x);
-      yCandidates.push(point.y);
+      candidates.push(point.x, point.y);
     });
-    if (state.c[0] > EPS) xCandidates.push(state.kMax / state.c[0]);
-    if (state.c[1] > EPS) yCandidates.push(state.kMax / state.c[1]);
-
-    const rawXMax = Math.min(100, Math.max(...xCandidates) * 1.1);
-    const rawYMax = Math.min(100, Math.max(...yCandidates) * 1.1);
-    const pixelsPerUnit = Math.min(innerWidth / rawXMax, innerHeight / rawYMax);
-    return {
-      xMax: innerWidth / pixelsPerUnit,
-      yMax: innerHeight / pixelsPerUnit
-    };
+    const requiredMax = Math.max(...candidates);
+    const axisMax = requiredMax > 13 + EPS ? Math.min(100, requiredMax * 1.1) : 13;
+    return { xMax: axisMax, yMax: axisMax };
   }
 
   function polygonPoints(polygon, scales) {
