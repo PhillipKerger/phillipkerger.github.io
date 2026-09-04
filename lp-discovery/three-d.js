@@ -2,16 +2,17 @@
   "use strict";
 
   const EPS = 1e-7;
-  const constraintColors = ["#0066cc", "#d7191c", "#6a1b9a"];
+  const constraintColors = ["#0066cc", "#d7191c", "#6a1b9a", "#008c95"];
   const defaults = {
     c: [3, 2, 4],
     constraints: [
       { n: [1, 1, 1], rhs: 8 },
       { n: [2, 1, 1], rhs: 10 },
-      { n: [1, 3, 2], rhs: 15 }
+      { n: [1, 3, 2], rhs: 15 },
+      { n: [0, 0, 1], rhs: 5 }
     ],
-    k: 31,
-    kMax: 62
+    k: 28,
+    kMax: 56
   };
 
   let state = clone(defaults);
@@ -383,16 +384,18 @@
     ];
     const displayVertices = verticesFor(displayLines);
     const feasibleFaces = facesFor(displayVertices, displayLines);
+    const constraintCount = state.constraints.length;
+    const unclippedLineCount = inequalities().length;
     feasibleFaces.sort((first, second) => {
       const a = project(centroid(first.points)).depth;
       const b = project(centroid(second.points)).depth;
       return a - b;
     });
     feasibleFaces.forEach((face) => {
-      const edgeColor = face.source < 3 ? constraintColors[face.source] : "#555";
-      const dash = face.source >= 6 ? [5, 5] : [];
-      drawPolygon(ctx, face, project, "rgba(65, 135, 102, 0.20)", edgeColor, face.source < 3 ? 3 : 1.5, dash);
-      if (face.source < 3) {
+      const edgeColor = face.source < constraintCount ? constraintColors[face.source] : "#555";
+      const dash = face.source >= unclippedLineCount ? [5, 5] : [];
+      drawPolygon(ctx, face, project, "rgba(65, 135, 102, 0.20)", edgeColor, face.source < constraintCount ? 3 : 1.5, dash);
+      if (face.source < constraintCount) {
         const label = project(centroid(face.points));
         ctx.font = "bold 14px Helvetica, Arial, sans-serif";
         ctx.fillStyle = constraintColors[face.source];
