@@ -91,6 +91,68 @@
     </section>
   </main>
 
+  <hr class="section-divider">
+
+  <section class="three-d-app" aria-labelledby="three-d-heading">
+    <div class="section-heading">
+      <h1 id="three-d-heading">3D visualizer</h1>
+      <button id="reset-3d" type="button">Reset</button>
+    </div>
+
+    <div class="three-d-layout">
+      <section class="formulations">
+        <div>
+          <h2>Linear program</h2>
+          <div class="lp-form lp-form-3d" id="lp-form-3d">
+            <div class="lp-row lp-row-3d">
+              <span class="row-label">maximize</span>
+              <span class="expression" id="objective-inputs-3d"></span>
+            </div>
+            <div class="subject-to">subject to</div>
+            <div id="constraint-inputs-3d"></div>
+            <div class="lp-row lp-row-3d">
+              <span class="row-label"></span>
+              <span class="expression"><i>x</i><sub>1</sub>, <i>x</i><sub>2</sub>, <i>x</i><sub>3</sub> ≥ 0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="matrix-section">
+          <h2>Matrix-vector form</h2>
+          <div class="compact-model">
+            <div><span class="model-label">maximize</span> <i>c</i><sup>T</sup><i>x</i></div>
+            <div><span class="model-label">subject to</span> <i>Ax</i> ≤ <i>b</i>, <i>x</i> ≥ 0</div>
+          </div>
+          <div class="matrix-values" id="matrix-values-3d" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="visualizer">
+        <div class="plot-header">
+          <h2>Plot</h2>
+          <span id="problem-status-3d" aria-live="polite"></span>
+        </div>
+        <canvas id="plot-3d" width="650" height="650" aria-label="Interactive three-dimensional linear program plot"></canvas>
+        <div class="view-controls">
+          <span>Drag to rotate · scroll to zoom</span>
+          <button id="reset-view-3d" type="button">Reset view</button>
+        </div>
+        <div class="controls">
+          <div class="slider-row">
+            <label for="k-slider-3d"><i>k</i> = <output id="k-output-3d" for="k-slider-3d">31.00</output></label>
+            <input id="k-slider-3d" type="range" min="0" max="62" value="31" step="0.01">
+          </div>
+          <div class="control-row">
+            <label for="k-max-3d">Slider maximum</label>
+            <input id="k-max-3d" type="number" min="0.1" step="0.5" value="62">
+            <button id="set-optimum-3d" type="button">Set <i>k</i> to optimum</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
   <script src="app.js"></script>
+  <script src="three-d.js"></script>
 </body>
 </html>
