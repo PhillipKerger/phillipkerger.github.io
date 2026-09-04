@@ -20,7 +20,6 @@
   const innerHeight = height - margin.top - margin.bottom;
   const EPS = 1e-7;
   let state = JSON.parse(JSON.stringify(defaults));
-  let revealed = false;
 
   const svgNS = "http://www.w3.org/2000/svg";
   const $ = (id) => document.getElementById(id);
@@ -172,16 +171,26 @@
   }
 
   function graphBounds(solution) {
-    const candidates = [5];
+    const xCandidates = [5];
+    const yCandidates = [5];
     state.constraints.forEach((line) => {
-      if (line.a > EPS && line.rhs / line.a > 0) candidates.push(line.rhs / line.a);
-      if (line.b > EPS && line.rhs / line.b > 0) candidates.push(line.rhs / line.b);
+      if (line.a > EPS && line.rhs / line.a > 0) xCandidates.push(line.rhs / line.a);
+      if (line.b > EPS && line.rhs / line.b > 0) yCandidates.push(line.rhs / line.b);
     });
-    solution.vertices.forEach((point) => candidates.push(point.x, point.y));
-    if (state.c[0] > EPS) candidates.push(state.kMax / state.c[0]);
-    if (state.c[1] > EPS) candidates.push(state.kMax / state.c[1]);
-    const max = Math.min(100, Math.max(...candidates) * 1.12);
-    return { xMax: max, yMax: max };
+    solution.vertices.forEach((point) => {
+      xCandidates.push(point.x);
+      yCandidates.push(point.y);
+    });
+    if (state.c[0] > EPS) xCandidates.push(state.kMax / state.c[0]);
+    if (state.c[1] > EPS) yCandidates.push(state.kMax / state.c[1]);
+
+    const rawXMax = Math.min(100, Math.max(...xCandidates) * 1.1);
+    const rawYMax = Math.min(100, Math.max(...yCandidates) * 1.1);
+    const pixelsPerUnit = Math.min(innerWidth / rawXMax, innerHeight / rawYMax);
+    return {
+      xMax: innerWidth / pixelsPerUnit,
+      yMax: innerHeight / pixelsPerUnit
+    };
   }
 
   function polygonPoints(polygon, scales) {
@@ -276,12 +285,10 @@
       }
     }
 
-    if (revealed) {
-      solution.vertices.forEach((point) => {
-        const optimal = solution.type === "finite" && solution.optimalVertices.some((candidate) => Math.hypot(candidate.x - point.x, candidate.y - point.y) < EPS);
-        $("vertex-layer").appendChild(svgElement("circle", { cx: scales.x(point.x), cy: scales.y(point.y), r: optimal ? 7 : 5, class: optimal ? "vertex optimal" : "vertex" }));
-      });
-    }
+    solution.vertices.forEach((point) => {
+      const optimal = solution.type === "finite" && solution.optimalVertices.some((candidate) => Math.hypot(candidate.x - point.x, candidate.y - point.y) < EPS);
+      $("vertex-layer").appendChild(svgElement("circle", { cx: scales.x(point.x), cy: scales.y(point.y), r: optimal ? 7 : 5, class: optimal ? "vertex optimal" : "vertex" }));
+    });
   }
 
   function statusText(solution) {
@@ -301,65 +308,15 @@
     }
   }
 
-  function renderReading(solution) {
-    const reading = $("geometric-reading");
-    if (Math.hypot(...state.c) < EPS) {
-      reading.innerHTML = "<strong>The objective vector is zero.</strong> Every feasible point has the same objective value, so there is no direction of increase.";
-      return;
-    }
-    if (solution.type === "finite") {
-      const gap = solution.optimum - state.k;
-      if (Math.abs(gap) < 0.055) {
-        reading.innerHTML = `<strong>Last contact:</strong> the boundary <i>c</i><sup>T</sup><i>x</i> = ${format(state.k)} reaches the feasible region exactly at the optimum.`;
-      } else if (gap > 0) {
-        reading.innerHTML = `The threshold is below the optimum by <strong>${format(gap)}</strong>. Some feasible points lie in <i>c</i><sup>T</sup><i>x</i> ≥ <i>k</i>; move the slider right.`;
-      } else {
-        reading.innerHTML = `The threshold is above the optimum by <strong>${format(-gap)}</strong>. The objective halfspace no longer contains a feasible point.`;
-      }
-    } else if (solution.type === "unbounded") {
-      reading.innerHTML = "The constraints allow movement forever in an improving direction. There is no finite last-contact value.";
-    } else if (solution.type === "infeasible") {
-      reading.innerHTML = "The three constraint halfspaces and nonnegativity have no common point.";
-    } else {
-      reading.innerHTML = "This feasible set has no visible vertex for the app to optimize over.";
-    }
-  }
-
-  function revealText(solution) {
-    const output = $("reveal-text");
-    if (!revealed) {
-      output.hidden = true;
-      $("reveal-button").textContent = "Reveal vertices and optimum";
-      return;
-    }
-    output.hidden = false;
-    $("reveal-button").textContent = "Hide vertices and optimum";
-    if (solution.type === "finite") {
-      const points = solution.optimalVertices.map((point) => `(${format(point.x)}, ${format(point.y)})`).join(" and ");
-      output.textContent = solution.optimalVertices.length > 1
-        ? `The optimal value is ${format(solution.optimum)}. The optimal vertices are ${points}, and the edge joining them is also optimal.`
-        : `The optimal value is ${format(solution.optimum)}, attained at the vertex ${points}.`;
-    } else if (solution.type === "unbounded") {
-      output.textContent = "This objective is unbounded above, so there is no optimal vertex.";
-    } else if (solution.type === "infeasible") {
-      output.textContent = "The feasible region is empty, so there is no solution.";
-    } else {
-      output.textContent = "No optimal vertex was found.";
-    }
-  }
-
   function render() {
     readForm();
     $("k-slider").max = state.kMax;
     $("k-slider").value = state.k;
     $("k-output").value = Number(state.k).toFixed(2);
-    $("slider-max-label").textContent = format(state.kMax);
     renderMatrix();
     const solution = solve();
     statusText(solution);
     renderPlot(solution);
-    renderReading(solution);
-    revealText(solution);
   }
 
   function attachEvents() {
@@ -387,13 +344,8 @@
         render();
       }
     });
-    $("reveal-button").addEventListener("click", () => {
-      revealed = !revealed;
-      render();
-    });
     $("reset-button").addEventListener("click", () => {
       state = JSON.parse(JSON.stringify(defaults));
-      revealed = false;
       syncInputsFromState();
       render();
     });
