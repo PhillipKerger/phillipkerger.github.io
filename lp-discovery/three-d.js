@@ -508,6 +508,7 @@
     canvas.addEventListener("pointerup", stopDragging);
     canvas.addEventListener("pointercancel", stopDragging);
     canvas.addEventListener("wheel", (event) => {
+      if (!event.ctrlKey && !event.metaKey) return;
       event.preventDefault();
       view.zoom = Math.max(0.55, Math.min(2.4, view.zoom * Math.exp(-event.deltaY * 0.001)));
       draw3D(solveLP());

@@ -68,10 +68,11 @@ main {
 .section-heading h1 { margin-bottom: 0; }
 .three-d-layout {
   display: grid;
-  grid-template-columns: 440px minmax(560px, 1fr);
+  grid-template-columns: 350px minmax(500px, 1fr);
   gap: 42px;
   align-items: start;
 }
+.visualizer-3d { max-width: 560px; }
 
 .formulations { display: grid; gap: 42px; }
 .lp-form, .compact-model { font-family: Georgia, "Times New Roman", serif; }
@@ -97,10 +98,11 @@ main {
   background: white;
 }
 .lp-form input.rhs { width: 61px; margin-left: 4px; }
-.lp-form-3d { font-size: 0.92rem; }
-.lp-row-3d { grid-template-columns: 82px minmax(340px, 1fr); }
-.lp-form-3d input { width: 48px; }
-.lp-form-3d input.rhs { width: 56px; }
+.lp-form-3d { font-size: 0.82rem; }
+.lp-row-3d { grid-template-columns: 72px minmax(0, 1fr); }
+.lp-form-3d .expression { gap: 3px; }
+.lp-form-3d input { width: 40px; }
+.lp-form-3d input.rhs { width: 49px; }
 .lp-form input:focus, .controls input:focus { outline: 2px solid #777; outline-offset: 1px; }
 
 .compact-model { display: grid; gap: 7px; margin-bottom: 24px; }
@@ -137,7 +139,7 @@ main {
 #plot-3d {
   display: block;
   width: 100%;
-  max-width: 650px;
+  max-width: 560px;
   height: auto;
   border: 1px solid #aaa;
   background: white;
